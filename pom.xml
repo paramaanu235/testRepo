@@ -81,13 +81,28 @@
             <version>5.8.1</version>
             <scope>test</scope>
         </dependency>
-<!--        <dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-jupiter-suites-api</artifactId>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest</artifactId>
+            <version>2.2</version>
             <scope>test</scope>
-        </dependency>-->
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/junit/junit -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!--        <dependency>
+                    <groupId>org.junit.platform</groupId>
+                    <artifactId>junit-jupiter-suites-api</artifactId>
+                    <scope>test</scope>
+                </dependency>-->
         <!-- https://mvnrepository.com/artifact/org.springframework/spring-core -->
     </dependencies>
+
 
 
     <properties>

@@ -10,6 +10,7 @@ import org.apachetest.util.TableUtil;
 import org.apachetest.util.TableUtilWrapper;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.InjectMocks;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -33,6 +34,7 @@ class BuildResponseTest {
     @InjectMocks
     BuildResponse mockBuildResponse;
 
+
     @BeforeAll
     static void setUp() {
 
@@ -52,6 +54,7 @@ class BuildResponseTest {
         System.out.println("currentTime -> "+ currentTime);
         System.out.println("table time -> "+ TableUtil.getCurrentTS()); // this gives the correct mocked output
 
+
         TestPipeline p = TestPipeline.create().enableAbandonedNodeEnforcement(false);
 
         String s = "Element";
@@ -61,8 +64,8 @@ class BuildResponseTest {
         ITableUtilWrapper mockITable = mock(TableUtilWrapper.class);
         when(mockITable.wrapperMethod()).thenReturn(currentTime);
         mockBuildResponse = new BuildResponse(mockITable);
-        PCollection<String> output = input.apply(ParDo.of(mockBuildResponse)); // If you want to test wrapped static method through dependency injection
-        //PCollection<String> output = input.apply(ParDo.of(new BuildResponseNew())); // if you want to test static method without dependency injection
+        //PCollection<String> output = input.apply(ParDo.of(mockBuildResponse)); // If you want to test wrapped static method through dependency injection
+        PCollection<String> output = input.apply(ParDo.of(new BuildResponseNew())); // if you want to test static method without dependency injection
         String expectedOutput = currentTime + s;
         PAssert.that(output).containsInAnyOrder(expectedOutput);
         p.run().waitUntilFinish(); // this when runs gives the incorrect output
