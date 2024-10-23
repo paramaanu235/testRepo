@@ -7,7 +7,6 @@ import org.apache.beam.sdk.values.PCollection;
 import org.apache.beam.sdk.values.KV;
 import org.apachetest.util.ITableUtilWrapper;
 import org.apachetest.util.TableUtil;
-import org.apachetest.util.TableUtilWrapper;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -28,31 +27,34 @@ import static org.mockito.Mockito.when;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class BuildResponseTest {
 
-    private static MockedStatic<TableUtil> tableUtilMockedStatic;
-    private static String currentTime;
+    //private  MockedStatic<TableUtil> tableUtilMockedStatic;
+    private  String currentTime;
 
-    @InjectMocks
-    BuildResponse mockBuildResponse;
+    private  TableUtil tableUtil;
+
+    private  BuildResponse buildResponse;
 
 
-    @BeforeAll
-    static void setUp() {
+    @BeforeEach
+     void setUp() {
 
         currentTime  = Instant.now().toString().concat("test");
-        tableUtilMockedStatic = Mockito.mockStatic(TableUtil.class);
-        tableUtilMockedStatic.when(TableUtil::getCurrentTS).thenReturn(currentTime);
+        tableUtil = Mockito.mock(TableUtil.class);
+        Mockito.when(tableUtil.getCurrentTS()).thenReturn(currentTime);
+        buildResponse = new BuildResponse(tableUtil);
+        //tableUtilMockedStatic.when(TableUtil::getCurrentTS).thenReturn(currentTime);
     }
 
-    @AfterAll
-    static void tearDown() {
-        tableUtilMockedStatic.close();
+    @AfterEach
+    void tearDown() {
+        //tableUtilMockedStatic.close();
     }
 
     @Test
     public void BuildResponseProcessTest() throws Exception{
-        tableUtilMockedStatic.when(TableUtil::getCurrentTS).thenReturn(currentTime);
+       // tableUtilMockedStatic.when(TableUtil::getCurrentTS).thenReturn(currentTime);
         System.out.println("currentTime -> "+ currentTime);
-        System.out.println("table time -> "+ TableUtil.getCurrentTS()); // this gives the correct mocked output
+        System.out.println("table time -> "+ tableUtil.getCurrentTS()); // this gives the correct mocked output
 
 
         TestPipeline p = TestPipeline.create().enableAbandonedNodeEnforcement(false);
@@ -60,21 +62,19 @@ class BuildResponseTest {
         String s = "Element";
 
         PCollection<String> input = p.apply(Create.of(s));
-
-        ITableUtilWrapper mockITable = mock(TableUtilWrapper.class);
-        when(mockITable.wrapperMethod()).thenReturn(currentTime);
-        mockBuildResponse = new BuildResponse(mockITable);
-        //PCollection<String> output = input.apply(ParDo.of(mockBuildResponse)); // If you want to test wrapped static method through dependency injection
-        PCollection<String> output = input.apply(ParDo.of(new BuildResponseNew())); // if you want to test static method without dependency injection
+/*        ITableUtilWrapper mockITable = mock(TableUtilWrapper.class);
+        when(mockITable.wrapperMethod()).thenReturn(currentTime);*/
+        PCollection<String> output = input.apply(ParDo.of(buildResponse));
+        //PCollection<String> output = input.apply(ParDo.of(new BuildResponseNew()));
         String expectedOutput = currentTime + s;
         PAssert.that(output).containsInAnyOrder(expectedOutput);
-        p.run().waitUntilFinish(); // this when runs gives the incorrect output
+        p.run().waitUntilFinish();
     }
 
-    public static class BuildResponseNew extends DoFn<String, String> {
+    public class BuildResponseNew extends DoFn<String, String> {
         @DoFn.ProcessElement
         public void processElement(ProcessContext c) {
-            String timestamp = TableUtil.getCurrentTS();
+            String timestamp = tableUtil.getCurrentTS();
             System.out.println("Timestamp used -> " + timestamp);
             c.output(timestamp + c.element());
         }

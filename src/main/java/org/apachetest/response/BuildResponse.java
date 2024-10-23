@@ -2,18 +2,16 @@ package org.apachetest.response;
 
 import org.apache.beam.sdk.transforms.DoFn;
 import org.apachetest.util.ITableUtilWrapper;
-import org.apachetest.util.TableUtilWrapper;
+import org.apachetest.util.TableUtil;
 
 public class BuildResponse extends DoFn<String, String> {
 
-    public ITableUtilWrapper a;
+    private final TableUtil tableUtil;
 
-    public BuildResponse(){
-        a= new TableUtilWrapper();
+    public BuildResponse(TableUtil tableUtil) {
+        this.tableUtil = tableUtil;
     }
-    public BuildResponse(ITableUtilWrapper t){
-        a = t;
-    }
+
 
     @ProcessElement
     public void processElement(ProcessContext c, OutputReceiver<String> out)
@@ -24,7 +22,7 @@ public class BuildResponse extends DoFn<String, String> {
     }
 
     private String response(String s) {
-        var time = a.wrapperMethod();
+        var time = tableUtil.getCurrentTS();
         return time + s;
     }
 }

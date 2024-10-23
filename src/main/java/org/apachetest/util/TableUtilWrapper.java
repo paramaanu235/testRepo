@@ -1,3 +1,4 @@
+/*
 package org.apachetest.util;
 
 
@@ -8,3 +9,4 @@ public class TableUtilWrapper implements ITableUtilWrapper{
         return TableUtil.getCurrentTS();
     }
 }
+*/
