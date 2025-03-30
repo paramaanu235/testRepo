@@ -11,6 +11,7 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -30,6 +31,7 @@ class BuildResponseTest {
     //private  MockedStatic<TableUtil> tableUtilMockedStatic;
     private  String currentTime;
 
+    @Mock
     private  TableUtil tableUtil;
 
     private  BuildResponse buildResponse;
@@ -37,7 +39,6 @@ class BuildResponseTest {
 
     @BeforeEach
      void setUp() {
-
         currentTime  = Instant.now().toString().concat("test");
         tableUtil = Mockito.mock(TableUtil.class);
         Mockito.when(tableUtil.getCurrentTS()).thenReturn(currentTime);

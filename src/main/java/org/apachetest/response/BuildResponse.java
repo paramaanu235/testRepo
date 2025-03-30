@@ -11,7 +11,7 @@ public class BuildResponse extends DoFn<String, String> {
     public BuildResponse(TableUtil tableUtil) {
         this.tableUtil = tableUtil;
     }
-
+ 
 
     @ProcessElement
     public void processElement(ProcessContext c, OutputReceiver<String> out)
